@@ -1,5 +1,5 @@
-email: fplwrapper@gmail.com
-password: test3844
+email: # Insert FPL account email
+password: # Insert FPL account password
 swagger:
   resourcePackage: resources
   title: FPLWrapper
