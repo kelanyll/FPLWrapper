@@ -1,0 +1,10 @@
+{
+  "name": "Yll Kelani",
+  "club": "Chelsea",
+  "position": "midfielder",
+  "starting": true,
+  "captain": true,
+  "viceCaptain": false,
+  "nextFixtureOpposingClubName": "Spurs",
+  "nextFixtureHome": true
+}

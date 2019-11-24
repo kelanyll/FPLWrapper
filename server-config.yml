@@ -1,0 +1,9 @@
+email: fplwrapper@gmail.com
+password: test3844
+swagger:
+  resourcePackage: resources
+  title: FPLWrapper
+  version: v0.0.1
+  description: A user-friendly API for the Fantasy Premier League online game.
+  contact: Yll Kelani
+  contactEmail: yll.kelani@hotmail.co.uk
