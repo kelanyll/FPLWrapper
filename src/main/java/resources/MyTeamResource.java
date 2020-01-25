@@ -1,8 +1,6 @@
 package resources;
 
-import dao.ClubDAO;
-import dao.FixtureDAO;
-import dao.PlayerDAO;
+import dao.DAOInitialiser;
 import representations.MyPlayer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,16 +17,8 @@ import java.util.List;
 public class MyTeamResource {
     private final MyTeamService myTeamService;
 
-    public MyTeamResource(
-            PlayerDAO playerDao,
-            ClubDAO clubDao,
-            FixtureDAO fixtureDao
-    ) {
-        this.myTeamService = new MyTeamService(
-                playerDao,
-                clubDao,
-                fixtureDao
-        );
+    public MyTeamResource(DAOInitialiser daoInitialiser) {
+        this.myTeamService = new MyTeamService(daoInitialiser);
     }
 
     @POST

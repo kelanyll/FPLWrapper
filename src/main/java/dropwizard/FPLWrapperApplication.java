@@ -1,6 +1,7 @@
 package dropwizard;
 
-import dao.*;
+import dao.DAOInitialiser;
+import dao.DAOInitialiserImpl;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -27,19 +28,8 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
     @Override
     public void run(FPLWrapperConfiguration configuration,
                     Environment environment) {
-        DAOInitialiser daoInitialiser = new DAOInitialiser(
-                configuration.getEmail(),
-                configuration.getPassword()
-        );
-        PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
-        ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
-        FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
-
-        environment.jersey().register(new MyTeamResource(
-                playerDao,
-                clubDao,
-                fixtureDao
-        ));
+        DAOInitialiser daoInitialiser = new DAOInitialiserImpl();
+        environment.jersey().register(new MyTeamResource(daoInitialiser));
         environment.jersey().register(new DropwizardExceptionMapper());
     }
 }

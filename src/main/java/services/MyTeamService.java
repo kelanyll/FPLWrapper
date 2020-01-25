@@ -13,22 +13,22 @@ import java.io.IOException;
 import java.util.*;
 
 public class MyTeamService {
-    private PlayerDAO playerDao;
-    private ClubDAO clubDao;
-    private FixtureDAO fixtureDao;
+    DAOInitialiser daoInitialiser;
 
-    public MyTeamService(
-            PlayerDAO playerDao,
-            ClubDAO clubDao,
-            FixtureDAO fixtureDao
-    ) {
-        this.playerDao = playerDao;
-        this.clubDao = clubDao;
-        this.fixtureDao = fixtureDao;
+    public MyTeamService(DAOInitialiser daoInitialiser) {
+        this.daoInitialiser = daoInitialiser;
     }
 
     public List<MyPlayer> getMyTeam(String email, String password) {
         Util.authenticate(email, password);
+
+        // We initialise the DAOs every time a request is made so that the
+        // DAOs contain the most recent data. This is necessary until we can
+        // persist the content of the DAOs in a database and periodically
+        // check the FPL API for up-to-date data.
+        PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
+        ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
+        FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
 
         final String TEAM_URL = "https://fantasy.premierleague.com/api/my-team/" +
                 Util.getUserId() + "/";

@@ -95,4 +95,4 @@ fabric.properties
 
 target/
 
-server-config.yml
+.DS_Store
