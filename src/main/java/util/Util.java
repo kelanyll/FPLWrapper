@@ -2,6 +2,7 @@ package util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dropwizard.DropwizardException;
 
 import java.io.*;
 import java.net.*;
@@ -27,26 +28,26 @@ public final class Util {
         return respBody.toString();
     }
 
-    public static String sendPostRequest(String url_str, String reqBody) {
-        String resp = null;
+    public static HttpURLConnection sendPostRequest(String url_str, String reqBody) {
+        HttpURLConnection con = null;
         try {
             URL url = new URL(url_str);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             con.setDoOutput(true);
+            con.setInstanceFollowRedirects(false);
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = reqBody.getBytes("utf-8");
                 os.write(input, 0, input.length);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            resp = buildResponse(con.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return resp;
+        return con;
     }
 
     public static String sendGetRequest(String url_str) {
@@ -89,7 +90,16 @@ public final class Util {
                 "&redirect_uri=https%3A%2F%2Ffantasy.premierleague.com%2F";
 
         initCookies();
-        sendPostRequest(LOGIN_URL, LOGIN_REQ_BODY);
+
+        HttpURLConnection con = sendPostRequest(LOGIN_URL, LOGIN_REQ_BODY);
+
+        String redirectUri = con.getHeaderField("Location");
+        if (redirectUri.matches(".*state=fail.*")) {
+            throw new DropwizardException(
+                    "Fantasy Premier League's authentication has failed; " +
+                    "your email and/or password may be incorrect."
+            );
+        }
     }
 
     public static String getUserId() {

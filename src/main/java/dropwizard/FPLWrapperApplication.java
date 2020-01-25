@@ -40,5 +40,6 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
                 clubDao,
                 fixtureDao
         ));
+        environment.jersey().register(new DropwizardExceptionMapper());
     }
 }

@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="fpl-wrapper:jar">
+  <artifact type="jar" name="fpl-wrapper:jar">
     <output-path>$PROJECT_DIR$/target/artifacts/fpl_wrapper_jar</output-path>
     <root id="archive" name="fpl-wrapper.jar">
       <element id="module-output" name="fpl-wrapper" />
