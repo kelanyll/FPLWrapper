@@ -7,20 +7,26 @@ import entities.Club;
 import entities.Fixture;
 import entities.Player;
 import representations.MyPlayer;
+import util.FplUtilities;
+import util.UrlStreamSource;
 import util.Util;
 
 import java.io.IOException;
 import java.util.*;
 
 public class MyTeamService {
+    UrlStreamSource urlStreamSource;
+    FplUtilities fplUtilities;
     DAOInitialiser daoInitialiser;
 
-    public MyTeamService(DAOInitialiser daoInitialiser) {
+    public MyTeamService(UrlStreamSource urlStreamSource, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
         this.daoInitialiser = daoInitialiser;
+        this.fplUtilities = fplUtilities;
+        this.urlStreamSource = urlStreamSource;
     }
 
     public List<MyPlayer> getMyTeam(String email, String password) {
-        Util.authenticate(email, password);
+        fplUtilities.authenticate(email, password);
 
         // We initialise the DAOs every time a request is made so that the
         // DAOs contain the most recent data. This is necessary until we can
@@ -31,7 +37,7 @@ public class MyTeamService {
         FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
 
         final String TEAM_URL = "https://fantasy.premierleague.com/api/my-team/" +
-                Util.getUserId() + "/";
+                fplUtilities.getUserId() + "/";
         final Map<Integer, String> positionIdDict = new HashMap<Integer, String>() {{
             put(1, "goalkeeper");
             put(2, "defender");
@@ -39,7 +45,7 @@ public class MyTeamService {
             put(4, "forward");
         }};
 
-        String respBody = Util.sendGetRequest(TEAM_URL);
+        String respBody = urlStreamSource.sendGetRequest(TEAM_URL);
 
         JsonNode teamNode = null;
         try {

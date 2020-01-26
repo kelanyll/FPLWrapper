@@ -9,6 +9,9 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import resources.MyTeamResource;
+import util.FplUtilities;
+import util.SimpleUrlStreamSource;
+import util.UrlStreamSource;
 
 public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -28,8 +31,10 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
     @Override
     public void run(FPLWrapperConfiguration configuration,
                     Environment environment) {
-        DAOInitialiser daoInitialiser = new DAOInitialiserImpl();
-        environment.jersey().register(new MyTeamResource(daoInitialiser));
+        UrlStreamSource urlStreamSource = new SimpleUrlStreamSource();
+        FplUtilities fplUtilities = new FplUtilities(urlStreamSource);
+        DAOInitialiser daoInitialiser = new DAOInitialiserImpl(urlStreamSource, fplUtilities);
+        environment.jersey().register(new MyTeamResource(urlStreamSource, fplUtilities, daoInitialiser));
         environment.jersey().register(new DropwizardExceptionMapper());
     }
 }

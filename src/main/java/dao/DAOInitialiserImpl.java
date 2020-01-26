@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Club;
 import entities.Fixture;
 import entities.Player;
+import util.FplUtilities;
+import util.UrlStreamSource;
 import util.Util;
 
 import java.io.IOException;
@@ -12,10 +14,18 @@ import java.io.IOException;
 public class DAOInitialiserImpl implements DAOInitialiser {
     private static final String BOOTSTRAP_URL = "https://fantasy.premierleague.com/api/bootstrap-static/";
 
+    private UrlStreamSource urlStreamSource;
+    private FplUtilities fplUtilities;
+
+    public DAOInitialiserImpl(UrlStreamSource urlStreamSource, FplUtilities fplUtilities) {
+        this.urlStreamSource = urlStreamSource;
+        this.fplUtilities = fplUtilities;
+    }
+
     public PlayerDAO buildPlayerDao(PlayerDAO playerDao) {
         JsonNode bootstrapNode = null;
         try {
-            bootstrapNode = new ObjectMapper().readTree(Util.sendGetRequest(BOOTSTRAP_URL));
+            bootstrapNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(BOOTSTRAP_URL));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,7 +47,7 @@ public class DAOInitialiserImpl implements DAOInitialiser {
     public ClubDAO buildClubDao(ClubDAO clubDao) {
         JsonNode bootstrapNode = null;
         try {
-            bootstrapNode = new ObjectMapper().readTree(Util.sendGetRequest(BOOTSTRAP_URL));
+            bootstrapNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(BOOTSTRAP_URL));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,11 +66,11 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
     public FixtureDAO buildFixtureDao(FixtureDAO fixtureDao) {
         final String NEXT_FIXTURES_URL = "https://fantasy.premierleague.com/api/fixtures/?event="
-                + (Util.getCurrentGameweekId(Util.getUserId()) + 1);
+                + (fplUtilities.getCurrentGameweekId(fplUtilities.getUserId()) + 1);
 
         JsonNode fixturesNode = null;
         try {
-            fixturesNode = new ObjectMapper().readTree(Util.sendGetRequest(NEXT_FIXTURES_URL));
+            fixturesNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(NEXT_FIXTURES_URL));
         } catch (IOException e) {
             e.printStackTrace();
         }
