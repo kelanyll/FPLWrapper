@@ -46,11 +46,19 @@ public class FplUtilities {
         HttpURLConnection con = urlStreamSource.sendPostRequest(LOGIN_URL, LOGIN_REQ_BODY);
 
         String redirectUri = con.getHeaderField("Location");
-        if (redirectUri.matches(".*state=fail.*")) {
-            throw new DropwizardException(
-                    "Fantasy Premier League's authentication has failed; " +
-                            "your email and/or password may be incorrect."
-            );
+        if (redirectUri.matches(".*state=success.*")) {
+            System.out.println("Successfully authenticated.");
+        } else {
+            if (redirectUri.matches(".*state=fail.*")) {
+                throw new DropwizardException(
+                        "Fantasy Premier League's authentication has failed; " +
+                                "your email and/or password may be incorrect."
+                );
+            } else {
+                System.out.println(
+                        String.format("Authentication failed. Unable to understand response from FPL API.")
+                );
+            }
         }
     }
 
