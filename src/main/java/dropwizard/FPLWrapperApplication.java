@@ -1,6 +1,7 @@
 package dropwizard;
 
-import dao.*;
+import dao.DAOInitialiser;
+import dao.DAOInitialiserImpl;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -8,6 +9,11 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import resources.MyTeamResource;
+import util.FplUtilities;
+
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.http.HttpClient;
 
 public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -27,18 +33,16 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
     @Override
     public void run(FPLWrapperConfiguration configuration,
                     Environment environment) {
-        DAOInitialiser daoInitialiser = new DAOInitialiser(
-                configuration.getEmail(),
-                configuration.getPassword()
-        );
-        PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
-        ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
-        FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
+        HttpClient httpClient = HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .build();
+        FplUtilities fplUtilities = new FplUtilities(httpClient);
+        DAOInitialiser daoInitialiser = new DAOInitialiserImpl(httpClient, fplUtilities);
 
-        environment.jersey().register(new MyTeamResource(
-                playerDao,
-                clubDao,
-                fixtureDao
-        ));
+        final FplHealthCheck fplHealthCheck = new FplHealthCheck(httpClient);
+        environment.healthChecks().register("FPL", fplHealthCheck);
+
+        environment.jersey().register(new DropwizardExceptionMapper());
+        environment.jersey().register(new MyTeamResource(httpClient, fplUtilities, daoInitialiser));
     }
 }

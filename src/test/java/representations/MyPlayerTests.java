@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 
-public class MyPlayerTest {
+public class MyPlayerTests {
     private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 
     @Test

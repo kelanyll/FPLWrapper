@@ -7,31 +7,45 @@ import entities.Club;
 import entities.Fixture;
 import entities.Player;
 import representations.MyPlayer;
-import util.Util;
+import util.FplUtilities;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 public class MyTeamService {
-    private PlayerDAO playerDao;
-    private ClubDAO clubDao;
-    private FixtureDAO fixtureDao;
+    HttpClient httpClient;
+    FplUtilities fplUtilities;
+    DAOInitialiser daoInitialiser;
 
-    public MyTeamService(
-            PlayerDAO playerDao,
-            ClubDAO clubDao,
-            FixtureDAO fixtureDao
-    ) {
-        this.playerDao = playerDao;
-        this.clubDao = clubDao;
-        this.fixtureDao = fixtureDao;
+    public MyTeamService(HttpClient httpClient, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
+        this.daoInitialiser = daoInitialiser;
+        this.fplUtilities = fplUtilities;
+        this.httpClient = httpClient;
     }
 
     public List<MyPlayer> getMyTeam(String email, String password) {
-        Util.authenticate(email, password);
+        fplUtilities.authenticate(email, password);
+
+        // We initialise the DAOs every time a request is made so that the
+        // DAOs contain the most recent data. This is necessary until we can
+        // persist the content of the DAOs in a database and periodically
+        // check the FPL API for up-to-date data.
+        PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
+        ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
+        FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
+
+        String userId = fplUtilities.getUserId();
+        if (userId == null) {
+            throw new RuntimeException(
+                    "MyTeamService: userId is `null`. Something has likely gone wrong with a HTTP request."
+            );
+        }
 
         final String TEAM_URL = "https://fantasy.premierleague.com/api/my-team/" +
-                Util.getUserId() + "/";
+                fplUtilities.getUserId() + "/";
         final Map<Integer, String> positionIdDict = new HashMap<Integer, String>() {{
             put(1, "goalkeeper");
             put(2, "defender");
@@ -39,12 +53,14 @@ public class MyTeamService {
             put(4, "forward");
         }};
 
-        String respBody = Util.sendGetRequest(TEAM_URL);
-
         JsonNode teamNode = null;
         try {
-            teamNode = new ObjectMapper().readTree(respBody);
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(TEAM_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            teamNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
