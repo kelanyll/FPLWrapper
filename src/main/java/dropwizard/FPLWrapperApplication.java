@@ -39,6 +39,9 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
         FplUtilities fplUtilities = new FplUtilities(httpClient);
         DAOInitialiser daoInitialiser = new DAOInitialiserImpl(httpClient, fplUtilities);
 
+        final FplHealthCheck fplHealthCheck = new FplHealthCheck(httpClient);
+        environment.healthChecks().register("FPL", fplHealthCheck);
+
         environment.jersey().register(new DropwizardExceptionMapper());
         environment.jersey().register(new MyTeamResource(httpClient, fplUtilities, daoInitialiser));
     }
