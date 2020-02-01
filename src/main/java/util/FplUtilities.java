@@ -4,17 +4,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dropwizard.DropwizardException;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Optional;
 
 public class FplUtilities {
     private static final String UTF_8_ENC = "utf-8";
 
-    UrlStreamSource urlStreamSource;
+    HttpClient httpClient;
 
-    public FplUtilities(UrlStreamSource urlStreamSource) {
-        this.urlStreamSource = urlStreamSource;
+    public FplUtilities(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     private String caughtEncode(String string, String enc) {
@@ -28,12 +31,6 @@ public class FplUtilities {
         return encodedString;
     }
 
-    private void initCookies() {
-        CookieManager cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        CookieHandler.setDefault(cookieManager);
-    }
-
     public void authenticate(String email, String pass) {
         final String LOGIN_URL = "https://users.premierleague.com/accounts/login/";
         final String LOGIN_REQ_BODY = "login=" + caughtEncode(email, UTF_8_ENC) +
@@ -41,11 +38,21 @@ public class FplUtilities {
                 "&app=plfpl-web" +
                 "&redirect_uri=https%3A%2F%2Ffantasy.premierleague.com%2F";
 
-        initCookies();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(LOGIN_URL))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(LOGIN_REQ_BODY))
+                .build();
 
-        HttpURLConnection con = urlStreamSource.sendPostRequest(LOGIN_URL, LOGIN_REQ_BODY);
+        HttpResponse<String> response = null;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        String redirectUri = con.getHeaderField("Location");
+        Optional<String> optionalRedirectUri = response.headers().firstValue("location");
+        String redirectUri = optionalRedirectUri.get();
         if (redirectUri.matches(".*state=success.*")) {
             System.out.println("Successfully authenticated.");
         } else {
@@ -66,10 +73,18 @@ public class FplUtilities {
         final String ME_URL = "https://fantasy.premierleague.com/api/me/";
         final String ENTRY_KEY = "\"entry\":";
 
-        String respBody = urlStreamSource.sendGetRequest(ME_URL);
+        HttpResponse<String> response = null;
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ME_URL))
+                    .build();
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        int entryIndex = respBody.indexOf(ENTRY_KEY) + ENTRY_KEY.length();
-        return respBody.substring(entryIndex, respBody.indexOf(",", entryIndex));
+        int entryIndex = response.body().indexOf(ENTRY_KEY) + ENTRY_KEY.length();
+        return response.body().substring(entryIndex, response.body().indexOf(",", entryIndex));
     }
 
     public int getCurrentGameweekId(String userId) {
@@ -77,8 +92,12 @@ public class FplUtilities {
 
         JsonNode entryNode = null;
         try {
-            entryNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(ENTRY_URL));
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ENTRY_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            entryNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -8,20 +8,22 @@ import entities.Fixture;
 import entities.Player;
 import representations.MyPlayer;
 import util.FplUtilities;
-import util.UrlStreamSource;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 public class MyTeamService {
-    UrlStreamSource urlStreamSource;
+    HttpClient httpClient;
     FplUtilities fplUtilities;
     DAOInitialiser daoInitialiser;
 
-    public MyTeamService(UrlStreamSource urlStreamSource, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
+    public MyTeamService(HttpClient httpClient, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
         this.daoInitialiser = daoInitialiser;
         this.fplUtilities = fplUtilities;
-        this.urlStreamSource = urlStreamSource;
+        this.httpClient = httpClient;
     }
 
     public List<MyPlayer> getMyTeam(String email, String password) {
@@ -35,6 +37,13 @@ public class MyTeamService {
         ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
         FixtureDAO fixtureDao =  daoInitialiser.buildFixtureDao(new FixtureDAO());
 
+        String userId = fplUtilities.getUserId();
+        if (userId == null) {
+            throw new RuntimeException(
+                    "MyTeamService: userId is `null`. Something has likely gone wrong with a HTTP request."
+            );
+        }
+
         final String TEAM_URL = "https://fantasy.premierleague.com/api/my-team/" +
                 fplUtilities.getUserId() + "/";
         final Map<Integer, String> positionIdDict = new HashMap<Integer, String>() {{
@@ -44,12 +53,14 @@ public class MyTeamService {
             put(4, "forward");
         }};
 
-        String respBody = urlStreamSource.sendGetRequest(TEAM_URL);
-
         JsonNode teamNode = null;
         try {
-            teamNode = new ObjectMapper().readTree(respBody);
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(TEAM_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            teamNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

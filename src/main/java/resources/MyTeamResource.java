@@ -6,10 +6,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import services.MyTeamService;
 import util.FplUtilities;
-import util.UrlStreamSource;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.net.http.HttpClient;
 import java.util.List;
 
 @Path("/my-team")
@@ -19,8 +19,8 @@ import java.util.List;
 public class MyTeamResource {
     private final MyTeamService myTeamService;
 
-    public MyTeamResource(UrlStreamSource urlStreamSource, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
-        this.myTeamService = new MyTeamService(urlStreamSource, fplUtilities, daoInitialiser);
+    public MyTeamResource(HttpClient httpClient, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
+        this.myTeamService = new MyTeamService(httpClient, fplUtilities, daoInitialiser);
     }
 
     @POST

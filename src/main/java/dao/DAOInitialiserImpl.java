@@ -6,27 +6,32 @@ import entities.Club;
 import entities.Fixture;
 import entities.Player;
 import util.FplUtilities;
-import util.UrlStreamSource;
-import util.Util;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class DAOInitialiserImpl implements DAOInitialiser {
     private static final String BOOTSTRAP_URL = "https://fantasy.premierleague.com/api/bootstrap-static/";
 
-    private UrlStreamSource urlStreamSource;
+    private HttpClient httpClient;
     private FplUtilities fplUtilities;
 
-    public DAOInitialiserImpl(UrlStreamSource urlStreamSource, FplUtilities fplUtilities) {
-        this.urlStreamSource = urlStreamSource;
+    public DAOInitialiserImpl(HttpClient httpClient, FplUtilities fplUtilities) {
+        this.httpClient = httpClient;
         this.fplUtilities = fplUtilities;
     }
 
     public PlayerDAO buildPlayerDao(PlayerDAO playerDao) {
         JsonNode bootstrapNode = null;
         try {
-            bootstrapNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(BOOTSTRAP_URL));
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BOOTSTRAP_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            bootstrapNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -47,8 +52,12 @@ public class DAOInitialiserImpl implements DAOInitialiser {
     public ClubDAO buildClubDao(ClubDAO clubDao) {
         JsonNode bootstrapNode = null;
         try {
-            bootstrapNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(BOOTSTRAP_URL));
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BOOTSTRAP_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            bootstrapNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -70,8 +79,12 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
         JsonNode fixturesNode = null;
         try {
-            fixturesNode = new ObjectMapper().readTree(urlStreamSource.sendGetRequest(NEXT_FIXTURES_URL));
-        } catch (IOException e) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(NEXT_FIXTURES_URL))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            fixturesNode = new ObjectMapper().readTree(response.body());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
