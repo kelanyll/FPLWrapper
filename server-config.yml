@@ -1,3 +1,5 @@
+server:
+  rootPath: /fpl-wrapper
 swagger:
   resourcePackage: resources
   title: FPLWrapper
