@@ -9,6 +9,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import resources.MyTeamResource;
+import resources.PlayerResource;
 import util.FplUtilities;
 
 import java.net.CookieManager;
@@ -44,5 +45,6 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 
         environment.jersey().register(new DropwizardExceptionMapper());
         environment.jersey().register(new MyTeamResource(httpClient, fplUtilities, daoInitialiser));
+        environment.jersey().register(new PlayerResource());
     }
 }

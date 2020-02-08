@@ -24,7 +24,7 @@ public class MyTeamResource {
     }
 
     @POST
-    @ApiOperation(value = "Gets your live FPL team")
+    @ApiOperation(value = "Gets your live FPL team.")
     public List<MyPlayer> getMyTeam(
             @FormParam("email") String email,
             @FormParam("password") String password
