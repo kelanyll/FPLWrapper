@@ -20,6 +20,15 @@ public class PlayerDAO implements DAO<Player> {
         return Optional.ofNullable(player);
     }
 
+    public Optional<Player> getByName(String name) {
+        Player player = Util.findInList(
+                players,
+                possiblePlayer -> Util.sanitiseString(possiblePlayer.getName()).equals(Util.sanitiseString(name))
+        );
+
+        return Optional.ofNullable(player);
+    }
+
     @Override
     public List<Player> getAll() {
         return players;

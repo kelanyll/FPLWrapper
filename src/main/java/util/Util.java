@@ -13,4 +13,8 @@ public final class Util {
                 .findAny()
                 .orElse(null);
     }
+
+    public static String sanitiseString(String string) {
+        return string.toLowerCase().replaceAll("[^a-z]", "");
+    }
 }

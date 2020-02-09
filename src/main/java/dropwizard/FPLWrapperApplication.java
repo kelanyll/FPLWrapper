@@ -45,6 +45,6 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 
         environment.jersey().register(new DropwizardExceptionMapper());
         environment.jersey().register(new MyTeamResource(httpClient, fplUtilities, daoInitialiser));
-        environment.jersey().register(new PlayerResource());
+        environment.jersey().register(new PlayerResource(daoInitialiser));
     }
 }
