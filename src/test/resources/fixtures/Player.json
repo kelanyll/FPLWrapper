@@ -1,0 +1,63 @@
+{
+  "history": [
+    {
+      "element": 0,
+      "fixture": 7,
+      "opponent_team": 1,
+      "total_points": 0,
+      "was_home": false,
+      "kickoff_time": "2020-09-14T19:15:00Z",
+      "team_h_score": 1,
+      "team_a_score": 3,
+      "round": 1,
+      "minutes": 0,
+      "goals_scored": 0,
+      "assists": 0,
+      "clean_sheets": 0,
+      "goals_conceded": 0,
+      "own_goals": 0,
+      "penalties_saved": 0,
+      "penalties_missed": 0,
+      "yellow_cards": 0,
+      "red_cards": 0,
+      "saves": 0,
+      "bonus": 0,
+      "bps": 0,
+      "influence": "0.0",
+      "creativity": "0.0",
+      "threat": "0.0",
+      "ict_index": "0.0",
+      "value": 70,
+      "transfers_balance": 0,
+      "selected": 75648,
+      "transfers_in": 0,
+      "transfers_out": 0
+    }
+  ],
+  "history_past": [
+    {
+      "season_name": "2012/13",
+      "element_code": 44346,
+      "start_cost": 90,
+      "end_cost": 73,
+      "total_points": 121,
+      "minutes": 2331,
+      "goals_scored": 11,
+      "assists": 4,
+      "clean_sheets": 10,
+      "goals_conceded": 23,
+      "own_goals": 0,
+      "penalties_saved": 0,
+      "penalties_missed": 0,
+      "yellow_cards": 3,
+      "red_cards": 1,
+      "saves": 0,
+      "bonus": 13,
+      "bps": 0,
+      "influence": "0.0",
+      "creativity": "0.0",
+      "threat": "0.0",
+      "ict_index": "0.0"
+    }
+  ]
+}
