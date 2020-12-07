@@ -1,8 +1,6 @@
 package services;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import dao.ClubDAO;
 import dao.DAOInitialiser;
 import dao.PlayerDAO;
@@ -36,7 +34,7 @@ public class PlayerService {
 		ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
 
 		Player playerFromDao = playerDao.getByName(name).orElseThrow(() -> new DropwizardException(String.format(
-				"Player with name %s doesn't exist.", name)));
+			"Player with name %s doesn't exist.", name)));
 		Club clubFromDao = clubDao.getByCode(playerFromDao.getClubCode()).orElse(new Club("UNKNOWN", 0, 0));
 
 		return buildPlayerWithStats(playerFromDao, clubFromDao, clubDao);
@@ -48,10 +46,10 @@ public class PlayerService {
 		playerWithStats.setClubName(clubFromDao.getName());
 		playerWithStats.setPosition(positionIdDict.get(playerFromDao.getPositionId()));
 		playerWithStats.getHistory().stream().forEach(
-				(Gameweek gameweek) -> gameweek.setOpponent(
-						clubDao.get(gameweek.getOpponent_team()).orElse(new Club("UNKNOWN", 0, 0))
-								.getName()
-				)
+			(Gameweek gameweek) -> gameweek.setOpponent(
+				clubDao.get(gameweek.getOpponent_team()).orElse(new Club("UNKNOWN", 0, 0))
+					.getName()
+			)
 		);
 
 		return playerWithStats;
@@ -67,7 +65,7 @@ public class PlayerService {
 	private PlayerWithStats getPlayerAndDeserialise(int id) {
 		try {
 			String response = httpSingleton.sendGetRequest(String.format("https://fantasy.premierleague" +
-					".com/api/element-summary/%d/", id));
+				".com/api/element-summary/%d/", id));
 			return objectMapper.readValue(response, PlayerWithStats.class);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -8,22 +8,22 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class FplHealthCheck extends HealthCheck {
-    private HttpClient httpClient;
+	private HttpClient httpClient;
 
-    public FplHealthCheck(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+	public FplHealthCheck(HttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
 
-    @Override
-    protected Result check() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://fantasy.premierleague.com/"))
-                .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
-            return Result.unhealthy("Request to Fantasy Premier League home page returns a " + response.statusCode());
-        }
+	@Override
+	protected Result check() throws Exception {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri(URI.create("https://fantasy.premierleague.com/"))
+			.build();
+		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+		if (response.statusCode() != 200) {
+			return Result.unhealthy("Request to Fantasy Premier League home page returns a " + response.statusCode());
+		}
 
-        return Result.healthy();
-    }
+		return Result.healthy();
+	}
 }

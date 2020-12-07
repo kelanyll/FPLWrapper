@@ -44,11 +44,11 @@ public class MyTeamServiceTests {
 		HttpResponse mockedHttpResponse = mock(HttpResponse.class);
 
 		when(mockedHttpClient.send(
-				argThat(httpRequest -> httpRequest.method() == "GET"),
-				eq(HttpResponse.BodyHandlers.ofString())
+			argThat(httpRequest -> httpRequest.method() == "GET"),
+			eq(HttpResponse.BodyHandlers.ofString())
 		)).thenReturn(mockedHttpResponse);
 		when(mockedHttpResponse.body()).thenReturn(
-				"{\"picks\":[{\"element\":0,\"position\":1,\"is_captain\":true,\"is_vice_captain\":false}]}"
+			"{\"picks\":[{\"element\":0,\"position\":1,\"is_captain\":true,\"is_vice_captain\":false}]}"
 		);
 
 		FplUtilities mockedFplUtilities = mock(FplUtilities.class);
@@ -76,19 +76,19 @@ public class MyTeamServiceTests {
 		MyTeamService myTeamService = new MyTeamService(mockedHttpClient, mockedFplUtilities, mockedDaoInitialiser);
 
 		MyPlayer expectedMyPlayer = new MyPlayer(
-				"Eden Hazard",
-				"Chelsea",
-				"midfielder",
-				true,
-				true,
-				false,
-				"Spurs",
-				true
+			"Eden Hazard",
+			"Chelsea",
+			"midfielder",
+			true,
+			true,
+			false,
+			"Spurs",
+			true
 		);
 
 		assertThat(
-				myTeamService.getMyTeam("good_email", "good_password").get(0),
-				samePropertyValuesAs(expectedMyPlayer)
+			myTeamService.getMyTeam("good_email", "good_password").get(0),
+			samePropertyValuesAs(expectedMyPlayer)
 		);
 	}
 }

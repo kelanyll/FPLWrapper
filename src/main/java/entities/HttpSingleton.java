@@ -14,8 +14,8 @@ public final class HttpSingleton {
 
 	private HttpSingleton() {
 		this.httpClient = HttpClient.newBuilder()
-				.cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
-				.build();
+			.cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+			.build();
 	}
 
 	public static HttpSingleton getInstance() {
@@ -27,8 +27,8 @@ public final class HttpSingleton {
 
 	public String sendGetRequest(String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.build();
+			.uri(URI.create(url))
+			.build();
 		return httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
 	}
 }

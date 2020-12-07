@@ -8,7 +8,6 @@ import entities.HttpSingleton;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import resources.MyTeamResource;
@@ -38,12 +37,12 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 	public void run(FPLWrapperConfiguration configuration,
 	                Environment environment) {
 		HttpClient httpClient = HttpClient.newBuilder()
-				.cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
-				.build();
+			.cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+			.build();
 		FplUtilities fplUtilities = new FplUtilities(httpClient);
 		DAOInitialiser daoInitialiser = new DAOInitialiserImpl(httpClient, fplUtilities);
 		environment.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+			.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
 		final FplHealthCheck fplHealthCheck = new FplHealthCheck(httpClient);
 		environment.healthChecks().register("FPL", fplHealthCheck);
@@ -51,6 +50,6 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 		environment.jersey().register(new DropwizardExceptionMapper());
 		environment.jersey().register(new MyTeamResource(httpClient, fplUtilities, daoInitialiser));
 		environment.jersey().register(new PlayerResource(daoInitialiser, HttpSingleton.getInstance(),
-				environment.getObjectMapper()));
+			environment.getObjectMapper()));
 	}
 }

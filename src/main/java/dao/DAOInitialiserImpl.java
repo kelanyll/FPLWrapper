@@ -27,8 +27,8 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 		JsonNode bootstrapNode = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(BOOTSTRAP_URL))
-					.build();
+				.uri(URI.create(BOOTSTRAP_URL))
+				.build();
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			bootstrapNode = new ObjectMapper().readTree(response.body());
 		} catch (Exception e) {
@@ -37,20 +37,20 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
 		for (JsonNode playerNode : bootstrapNode.get("elements")) {
 			Player player = new Player(
-					playerNode.get("first_name").asText(),
-					playerNode.get("second_name").asText(),
-					playerNode.get("id").asInt(),
-					playerNode.get("element_type").asInt(),
-					playerNode.get("team_code").asInt(),
-					playerNode.get("form").asText(),
-					playerNode.get("now_cost").asInt(),
-					playerNode.get("event_points").asInt(),
-					playerNode.get("total_points").asInt(),
-					playerNode.get("selected_by_percent").asText(),
-					playerNode.get("influence").asText(),
-					playerNode.get("creativity").asText(),
-					playerNode.get("threat").asText(),
-					playerNode.get("ict_index").asText()
+				playerNode.get("first_name").asText(),
+				playerNode.get("second_name").asText(),
+				playerNode.get("id").asInt(),
+				playerNode.get("element_type").asInt(),
+				playerNode.get("team_code").asInt(),
+				playerNode.get("form").asText(),
+				playerNode.get("now_cost").asInt(),
+				playerNode.get("event_points").asInt(),
+				playerNode.get("total_points").asInt(),
+				playerNode.get("selected_by_percent").asText(),
+				playerNode.get("influence").asText(),
+				playerNode.get("creativity").asText(),
+				playerNode.get("threat").asText(),
+				playerNode.get("ict_index").asText()
 			);
 			playerDao.save(player);
 		}
@@ -62,8 +62,8 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 		JsonNode bootstrapNode = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(BOOTSTRAP_URL))
-					.build();
+				.uri(URI.create(BOOTSTRAP_URL))
+				.build();
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			bootstrapNode = new ObjectMapper().readTree(response.body());
 		} catch (Exception e) {
@@ -72,9 +72,9 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
 		for (JsonNode clubNode : bootstrapNode.get("teams")) {
 			Club club = new Club(
-					clubNode.get("name").asText(),
-					clubNode.get("code").asInt(),
-					clubNode.get("id").asInt()
+				clubNode.get("name").asText(),
+				clubNode.get("code").asInt(),
+				clubNode.get("id").asInt()
 			);
 			clubDao.save(club);
 		}
@@ -84,13 +84,13 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
 	public FixtureDAO buildFixtureDao(FixtureDAO fixtureDao) {
 		final String NEXT_FIXTURES_URL = "https://fantasy.premierleague.com/api/fixtures/?event="
-				+ (fplUtilities.getCurrentGameweekId(fplUtilities.getUserId()) + 1);
+			+ (fplUtilities.getCurrentGameweekId(fplUtilities.getUserId()) + 1);
 
 		JsonNode fixturesNode = null;
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(NEXT_FIXTURES_URL))
-					.build();
+				.uri(URI.create(NEXT_FIXTURES_URL))
+				.build();
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			fixturesNode = new ObjectMapper().readTree(response.body());
 		} catch (Exception e) {
@@ -99,8 +99,8 @@ public class DAOInitialiserImpl implements DAOInitialiser {
 
 		for (JsonNode fixtureNode : fixturesNode) {
 			Fixture fixture = new Fixture(
-					fixtureNode.get("team_h").asInt(),
-					fixtureNode.get("team_a").asInt()
+				fixtureNode.get("team_h").asInt(),
+				fixtureNode.get("team_a").asInt()
 			);
 			fixtureDao.save(fixture);
 		}

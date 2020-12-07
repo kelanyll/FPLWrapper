@@ -17,8 +17,8 @@ public class Player {
 	private String ictIndex;
 
 	public Player(String firstName, String secondName, int playerId, int positionId, int clubCode, String form,
-                  int price, int gameweekPoints, int totalPoints, String selectedByPercent, String influence,
-                  String creativity, String threat, String ictIndex) {
+	              int price, int gameweekPoints, int totalPoints, String selectedByPercent, String influence,
+	              String creativity, String threat, String ictIndex) {
 		this.firstName = firstName;
 		this.secondName = secondName;
 		this.playerId = playerId;
@@ -42,39 +42,39 @@ public class Player {
 		return clubCode;
 	}
 
-    public String getForm() {
-        return form;
-    }
+	public String getForm() {
+		return form;
+	}
 
-    public int getPrice() {
-        return price;
-    }
+	public int getPrice() {
+		return price;
+	}
 
-    public int getGameweekPoints() {
-        return gameweekPoints;
-    }
+	public int getGameweekPoints() {
+		return gameweekPoints;
+	}
 
-    public int getTotalPoints() {
-        return totalPoints;
-    }
+	public int getTotalPoints() {
+		return totalPoints;
+	}
 
-    public String getSelectedByPercent() {
-        return selectedByPercent;
-    }
+	public String getSelectedByPercent() {
+		return selectedByPercent;
+	}
 
-    public String getInfluence() {
-        return influence;
-    }
+	public String getInfluence() {
+		return influence;
+	}
 
-    public String getCreativity() {
-        return creativity;
-    }
+	public String getCreativity() {
+		return creativity;
+	}
 
-    public String getThreat() {
-        return threat;
-    }
+	public String getThreat() {
+		return threat;
+	}
 
-    public String getIctIndex() {
-        return ictIndex;
-    }
+	public String getIctIndex() {
+		return ictIndex;
+	}
 }
