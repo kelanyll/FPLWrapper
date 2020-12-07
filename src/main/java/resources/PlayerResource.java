@@ -1,6 +1,8 @@
 package resources;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.DAOInitialiser;
+import entities.HttpSingleton;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import representations.PlayerWithStats;
@@ -16,15 +18,15 @@ import javax.ws.rs.core.MediaType;
 @Api("/player")
 @Produces(MediaType.APPLICATION_JSON)
 public class PlayerResource {
-    private final PlayerService playerService;
+	private final PlayerService playerService;
 
-    public PlayerResource(DAOInitialiser daoInitialiser) {
-        this.playerService = new PlayerService(daoInitialiser);
-    }
+	public PlayerResource(DAOInitialiser daoInitialiser, HttpSingleton httpSingleton, ObjectMapper objectMapper) {
+		this.playerService = new PlayerService(daoInitialiser, httpSingleton, objectMapper);
+	}
 
-    @GET
-    @ApiOperation(value = "Gets stats and relevant information about a player.")
-    public PlayerWithStats getPlayer(@QueryParam("name") String name) {
-        return playerService.getPlayer(name);
-    }
+	@GET
+	@ApiOperation(value = "Gets stats and relevant information about a player.")
+	public PlayerWithStats getPlayer(@QueryParam("name") String name) {
+		return playerService.getPlayer(name);
+	}
 }
