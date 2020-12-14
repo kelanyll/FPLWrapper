@@ -3,7 +3,7 @@ server:
 swagger:
   resourcePackage: resources
   title: FPLWrapper
-  version: v0.1.0
+  version: 0.2.0
   description: A user-friendly API for the Fantasy Premier League online game.
   contact: Yll Kelani
   contactEmail: yll.kelani@hotmail.co.uk
