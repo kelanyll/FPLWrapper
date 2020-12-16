@@ -36,13 +36,15 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 	@Override
 	public void run(FPLWrapperConfiguration configuration,
 	                Environment environment) {
+		environment.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
 		HttpClient httpClient = HttpClient.newBuilder()
 			.cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
 			.build();
 		FplUtilities fplUtilities = new FplUtilities(httpClient);
-		DAOInitialiser daoInitialiser = new DAOInitialiserImpl(httpClient, fplUtilities);
-		environment.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+		DAOInitialiser daoInitialiser = new DAOInitialiserImpl(HttpSingleton.getInstance(), fplUtilities, environment.getObjectMapper());
+
 
 		final FplHealthCheck fplHealthCheck = new FplHealthCheck(httpClient);
 		environment.healthChecks().register("FPL", fplHealthCheck);

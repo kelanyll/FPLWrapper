@@ -1,9 +1,9 @@
 package dao;
 
 public interface DAOInitialiser {
-	PlayerDAO buildPlayerDao(PlayerDAO playerDao);
+	PlayerDAO buildPlayerDao();
 
-	ClubDAO buildClubDao(ClubDAO clubDao);
+	ClubDAO buildClubDao();
 
-	FixtureDAO buildFixtureDao(FixtureDAO fixtureDao);
+	FixtureDAO buildFixtureDao();
 }

@@ -11,7 +11,14 @@ import java.util.Optional;
  * This class stores the fixtures in the current gameweek
  */
 public class FixtureDAO implements DAO<Fixture> {
-	private List<Fixture> fixtures = new ArrayList<>();
+	private List<Fixture> fixtures;
+
+	// Jackson
+	private FixtureDAO() {}
+
+	public FixtureDAO(List<Fixture> fixtures) {
+		this.fixtures = fixtures;
+	}
 
 	// This function is useless as Fixtures don't have IDs.
 	@Override
@@ -38,5 +45,13 @@ public class FixtureDAO implements DAO<Fixture> {
 	@Override
 	public void save(Fixture fixture) {
 		fixtures.add(fixture);
+	}
+
+	public List<Fixture> getFixtures() {
+		return fixtures;
+	}
+
+	public void setFixtures(List<Fixture> fixtures) {
+		this.fixtures = fixtures;
 	}
 }

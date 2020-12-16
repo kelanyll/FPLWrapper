@@ -1,110 +1,59 @@
 package dao;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import entities.Club;
+import dropwizard.DropwizardException;
 import entities.Fixture;
-import entities.Player;
+import entities.HttpSingleton;
 import util.FplUtilities;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.List;
 
 public class DAOInitialiserImpl implements DAOInitialiser {
 	private static final String BOOTSTRAP_URL = "https://fantasy.premierleague.com/api/bootstrap-static/";
 
-	private HttpClient httpClient;
+	private HttpSingleton httpSingleton;
 	private FplUtilities fplUtilities;
+	private ObjectMapper objectMapper;
 
-	public DAOInitialiserImpl(HttpClient httpClient, FplUtilities fplUtilities) {
-		this.httpClient = httpClient;
+	public DAOInitialiserImpl(HttpSingleton httpSingleton, FplUtilities fplUtilities,
+	                          ObjectMapper objectMapper) {
+		this.httpSingleton = httpSingleton;
 		this.fplUtilities = fplUtilities;
+		this.objectMapper = objectMapper;
 	}
 
-	public PlayerDAO buildPlayerDao(PlayerDAO playerDao) {
-		JsonNode bootstrapNode = null;
-		try {
-			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(BOOTSTRAP_URL))
-				.build();
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			bootstrapNode = new ObjectMapper().readTree(response.body());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		for (JsonNode playerNode : bootstrapNode.get("elements")) {
-			Player player = new Player(
-				playerNode.get("first_name").asText(),
-				playerNode.get("second_name").asText(),
-				playerNode.get("id").asInt(),
-				playerNode.get("element_type").asInt(),
-				playerNode.get("team_code").asInt(),
-				playerNode.get("form").asText(),
-				playerNode.get("now_cost").asInt(),
-				playerNode.get("event_points").asInt(),
-				playerNode.get("total_points").asInt(),
-				playerNode.get("selected_by_percent").asText(),
-				playerNode.get("influence").asText(),
-				playerNode.get("creativity").asText(),
-				playerNode.get("threat").asText(),
-				playerNode.get("ict_index").asText()
-			);
-			playerDao.save(player);
-		}
-
-		return playerDao;
+	public PlayerDAO buildPlayerDao() {
+		return getDAO(BOOTSTRAP_URL, PlayerDAO.class);
 	}
 
-	public ClubDAO buildClubDao(ClubDAO clubDao) {
-		JsonNode bootstrapNode = null;
-		try {
-			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(BOOTSTRAP_URL))
-				.build();
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			bootstrapNode = new ObjectMapper().readTree(response.body());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		for (JsonNode clubNode : bootstrapNode.get("teams")) {
-			Club club = new Club(
-				clubNode.get("name").asText(),
-				clubNode.get("code").asInt(),
-				clubNode.get("id").asInt()
-			);
-			clubDao.save(club);
-		}
-
-		return clubDao;
+	public ClubDAO buildClubDao() {
+		return getDAO(BOOTSTRAP_URL, ClubDAO.class);
 	}
 
-	public FixtureDAO buildFixtureDao(FixtureDAO fixtureDao) {
-		final String NEXT_FIXTURES_URL = "https://fantasy.premierleague.com/api/fixtures/?event="
-			+ (fplUtilities.getCurrentGameweekId(fplUtilities.getUserId()) + 1);
-
-		JsonNode fixturesNode = null;
+	private <T extends DAO> T getDAO(String url, Class<T> daoClass) {
 		try {
-			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(NEXT_FIXTURES_URL))
-				.build();
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			fixturesNode = new ObjectMapper().readTree(response.body());
+			String response = httpSingleton.sendGetRequest(url);
+			return objectMapper.readValue(response, daoClass);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new DropwizardException("Something's gone wrong on our end.");
 		}
+	}
 
-		for (JsonNode fixtureNode : fixturesNode) {
-			Fixture fixture = new Fixture(
-				fixtureNode.get("team_h").asInt(),
-				fixtureNode.get("team_a").asInt()
-			);
-			fixtureDao.save(fixture);
+	public FixtureDAO buildFixtureDao() {
+		List<Fixture> fixtures = getFixtures();
+		FixtureDAO fixtureDAO = new FixtureDAO(fixtures);
+		return fixtureDAO;
+	}
+
+	private List<Fixture> getFixtures() {
+		try {
+			String response = httpSingleton.sendGetRequest("https://fantasy.premierleague.com/api/fixtures/?event="
+				+ (fplUtilities.getCurrentGameweekId(fplUtilities.getUserId()) + 1));
+			return objectMapper.readValue(response, new TypeReference<List<Fixture>>() { });
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DropwizardException("Something's gone wrong on our end.");
 		}
-
-		return fixtureDao;
 	}
 }

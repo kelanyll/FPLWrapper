@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
@@ -31,8 +33,8 @@ public class MyTeamServiceTests {
 		when(mockedHttpHeaders.firstValue(eq("location"))).thenReturn(Optional.of("state=fail"));
 
 		FplUtilities fplUtilities = new FplUtilities(mockedHttpClient);
-		DAOInitialiser daoInitialiser = new DAOInitialiserImpl(mockedHttpClient, fplUtilities);
-		MyTeamService myTeamService = new MyTeamService(mockedHttpClient, fplUtilities, daoInitialiser);
+		DAOInitialiser mockedDaoInitialiser = mock(DAOInitialiser.class);
+		MyTeamService myTeamService = new MyTeamService(mockedHttpClient, fplUtilities, mockedDaoInitialiser);
 
 		// This call of the service should return a DropwizardException.
 		myTeamService.getMyTeam("bad_email", "bad_password");
@@ -56,22 +58,26 @@ public class MyTeamServiceTests {
 
 		DAOInitialiser mockedDaoInitialiser = mock(DAOInitialiser.class);
 
-		PlayerDAO playerDao = new PlayerDAO();
+		List<Player> players = new ArrayList<>();
 		Player player = new Player("Eden", "Hazard", 0, 3, 0, "5", 5, 5, 5, "5", "5", "5", "5", "5");
-		playerDao.save(player);
-		when(mockedDaoInitialiser.buildPlayerDao(any())).thenReturn(playerDao);
+		players.add(player);
+		PlayerDAO playerDao = new PlayerDAO(players);
+		when(mockedDaoInitialiser.buildPlayerDao()).thenReturn(playerDao);
 
-		ClubDAO clubDao = new ClubDAO();
+		List<Club> clubs = new ArrayList<>();
 		Club club = new Club("Chelsea", 0, 0);
 		Club opposingClub = new Club("Spurs", 1, 1);
-		clubDao.save(club);
-		clubDao.save(opposingClub);
-		when(mockedDaoInitialiser.buildClubDao(any())).thenReturn(clubDao);
+		clubs.add(club);
+		clubs.add(opposingClub);
+		ClubDAO clubDao = new ClubDAO(clubs);
 
-		FixtureDAO fixtureDao = new FixtureDAO();
+		when(mockedDaoInitialiser.buildClubDao()).thenReturn(clubDao);
+
+		List<Fixture> fixtures = new ArrayList<>();
 		Fixture fixture = new Fixture(0, 1);
-		fixtureDao.save(fixture);
-		when(mockedDaoInitialiser.buildFixtureDao(any())).thenReturn(fixtureDao);
+		fixtures.add(fixture);
+		FixtureDAO fixtureDao = new FixtureDAO(fixtures);
+		when(mockedDaoInitialiser.buildFixtureDao()).thenReturn(fixtureDao);
 
 		MyTeamService myTeamService = new MyTeamService(mockedHttpClient, mockedFplUtilities, mockedDaoInitialiser);
 

@@ -1,5 +1,6 @@
 package dao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import entities.Player;
 import util.Util;
 
@@ -8,13 +9,21 @@ import java.util.List;
 import java.util.Optional;
 
 public class PlayerDAO implements DAO<Player> {
-	private List<Player> players = new ArrayList<>();
+	@JsonProperty("elements")
+	private List<Player> players;
+
+	// Jackson
+	private PlayerDAO() {}
+
+	public PlayerDAO(List<Player> players) {
+		this.players = players;
+	}
 
 	@Override
 	public Optional<Player> get(int id) {
 		Player player = Util.findInList(
 			players,
-			possiblePlayer -> possiblePlayer.getPlayerId() == id
+			possiblePlayer -> possiblePlayer.getId() == id
 		);
 
 		return Optional.ofNullable(player);
@@ -37,5 +46,13 @@ public class PlayerDAO implements DAO<Player> {
 	@Override
 	public void save(Player player) {
 		players.add(player);
+	}
+
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
 	}
 }

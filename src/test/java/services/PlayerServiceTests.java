@@ -16,7 +16,9 @@ import representations.Season;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +50,6 @@ public class PlayerServiceTests {
 	private DAOInitialiser mockDaoInitialiser() {
 		DAOInitialiser mockedDaoInitialiser = mock(DAOInitialiser.class);
 
-		PlayerDAO playerDao = new PlayerDAO();
 		Player player = new Player(
 				"Olivier",
 				"Giroud",
@@ -65,15 +66,18 @@ public class PlayerServiceTests {
 				"5",
 				"5"
 		);
-		playerDao.save(player);
-		when(mockedDaoInitialiser.buildPlayerDao(any())).thenReturn(playerDao);
+		List<Player> players = new ArrayList();
+		players.add(player);
+		PlayerDAO playerDao = new PlayerDAO(players);
+		when(mockedDaoInitialiser.buildPlayerDao()).thenReturn(playerDao);
 
-		ClubDAO clubDao = new ClubDAO();
 		Club club = new Club("Chelsea", 0, 0);
 		Club opposingClub = new Club("Spurs", 1, 1);
-		clubDao.save(club);
-		clubDao.save(opposingClub);
-		when(mockedDaoInitialiser.buildClubDao(any())).thenReturn(clubDao);
+		List<Club> clubs = new ArrayList();
+		clubs.add(club);
+		clubs.add(opposingClub);
+		ClubDAO clubDao = new ClubDAO(clubs);
+		when(mockedDaoInitialiser.buildClubDao()).thenReturn(clubDao);
 
 		return mockedDaoInitialiser;
 	}
@@ -225,8 +229,8 @@ public class PlayerServiceTests {
 
 	private DAOInitialiser mockEmptyDaoInitialiser() {
 		DAOInitialiser mockedEmptyDaoInitialiser = mock(DAOInitialiser.class);
-		when(mockedEmptyDaoInitialiser.buildPlayerDao(any())).thenReturn(new PlayerDAO());
-		when(mockedEmptyDaoInitialiser.buildClubDao(any())).thenReturn(new ClubDAO());
+		when(mockedEmptyDaoInitialiser.buildPlayerDao()).thenReturn(new PlayerDAO(new ArrayList<Player>()));
+		when(mockedEmptyDaoInitialiser.buildClubDao()).thenReturn(new ClubDAO(new ArrayList<Club>()));
 
 		return mockedEmptyDaoInitialiser;
 	}

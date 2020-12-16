@@ -39,9 +39,9 @@ public class MyTeamService {
 		// DAOs contain the most recent data. This is necessary until we can
 		// persist the content of the DAOs in a database and periodically
 		// check the FPL API for up-to-date data.
-		PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
-		ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
-		FixtureDAO fixtureDao = daoInitialiser.buildFixtureDao(new FixtureDAO());
+		PlayerDAO playerDao = daoInitialiser.buildPlayerDao();
+		ClubDAO clubDao = daoInitialiser.buildClubDao();
+		FixtureDAO fixtureDao = daoInitialiser.buildFixtureDao();
 
 		String userId = fplUtilities.getUserId();
 		if (userId == null) {

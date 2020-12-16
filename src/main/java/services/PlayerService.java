@@ -30,8 +30,8 @@ public class PlayerService {
 		// DAOs contain the most recent data. This is necessary until we can
 		// persist the content of the DAOs in a database and periodically
 		// check the FPL API for up-to-date data.
-		PlayerDAO playerDao = daoInitialiser.buildPlayerDao(new PlayerDAO());
-		ClubDAO clubDao = daoInitialiser.buildClubDao(new ClubDAO());
+		PlayerDAO playerDao = daoInitialiser.buildPlayerDao();
+		ClubDAO clubDao = daoInitialiser.buildClubDao();
 
 		Player playerFromDao = playerDao.getByName(name).orElseThrow(() -> new DropwizardException(String.format(
 			"Player with name %s doesn't exist.", name)));
@@ -41,7 +41,7 @@ public class PlayerService {
 	}
 
 	private PlayerWithStats buildPlayerWithStats(Player playerFromDao, Club clubFromDao, ClubDAO clubDao) {
-		PlayerWithStats playerWithStats = getPlayerAndDeserialise(playerFromDao.getPlayerId());
+		PlayerWithStats playerWithStats = getPlayerAndDeserialise(playerFromDao.getId());
 		playerWithStats.setName(playerFromDao.getName());
 		playerWithStats.setClubName(clubFromDao.getName());
 		playerWithStats.setPosition(positionIdDict.get(playerFromDao.getPositionId()));

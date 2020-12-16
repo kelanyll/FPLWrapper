@@ -1,5 +1,6 @@
 package dao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import entities.Club;
 import util.Util;
 
@@ -8,7 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClubDAO implements DAO<Club> {
-	private List<Club> clubs = new ArrayList<>();
+	@JsonProperty("teams")
+	private List<Club> clubs;
+
+	// Jackson
+	private ClubDAO() {}
+
+	public ClubDAO(List<Club> clubs) {
+		this.clubs = clubs;
+	}
 
 	@Override
 	public Optional<Club> get(int id) {
@@ -37,5 +46,13 @@ public class ClubDAO implements DAO<Club> {
 	@Override
 	public void save(Club club) {
 		clubs.add(club);
+	}
+
+	public List<Club> getClubs() {
+		return clubs;
+	}
+
+	public void setClubs(List<Club> clubs) {
+		this.clubs = clubs;
 	}
 }
