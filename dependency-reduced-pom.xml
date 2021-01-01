@@ -29,7 +29,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>dropwizard.FPLWrapperApplication</mainClass>
+                  <mainClass>FPLWrapperApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>

@@ -1,15 +1,15 @@
 package resources;
 
-import dao.DAOInitialiser;
+import db.ClubDAO;
+import db.PlayerDAO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import representations.MyPlayer;
-import services.MyTeamService;
-import util.FplUtilities;
+import api.MyPlayer;
+import core.MyTeamService;
+import client.FplUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.net.http.HttpClient;
 import java.util.List;
 
 @Path("/my-team")
@@ -19,8 +19,8 @@ import java.util.List;
 public class MyTeamResource {
 	private final MyTeamService myTeamService;
 
-	public MyTeamResource(HttpClient httpClient, FplUtilities fplUtilities, DAOInitialiser daoInitialiser) {
-		this.myTeamService = new MyTeamService(httpClient, fplUtilities, daoInitialiser);
+	public MyTeamResource(ClubDAO clubDao, PlayerDAO playerDAO, FplUtil fplUtil) {
+		this.myTeamService = new MyTeamService(clubDao, playerDAO, fplUtil);
 	}
 
 	@POST
