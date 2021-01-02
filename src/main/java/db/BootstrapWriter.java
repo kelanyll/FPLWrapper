@@ -6,6 +6,8 @@ import exceptions.DropwizardException;
 import core.Club;
 import client.HttpUtil;
 import core.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -16,12 +18,14 @@ public class BootstrapWriter implements Runnable {
 	private final ObjectMapper objectMapper;
 	private final ClubDAO clubDAO;
 	private final PlayerDAO playerDAO;
+	private final Logger logger;
 
 	public BootstrapWriter(HttpUtil httpUtil, ObjectMapper objectMapper, ClubDAO clubDAO, PlayerDAO playerDAO) {
 		this.httpUtil = httpUtil;
 		this.objectMapper = objectMapper;
 		this.clubDAO = clubDAO;
 		this.playerDAO = playerDAO;
+		this.logger = LoggerFactory.getLogger(BootstrapWriter.class);
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public class BootstrapWriter implements Runnable {
 	}
 
 	private void insertClubs(JsonNode bootstrapData) {
-		System.out.println("Writing clubs to database from bootstrap data.");
+		logger.info("Writing clubs to database from bootstrap data");
 		Club[] clubs = getBootstrapValue(bootstrapData, "teams", Club[].class);
 		for (Club club : clubs) {
 			clubDAO.insert(club);
@@ -66,7 +70,7 @@ public class BootstrapWriter implements Runnable {
 	}
 
 	private void insertPlayers(JsonNode bootstrapData) {
-		System.out.println("Writing players to database from bootstrap data.");
+		logger.info("Writing players to database from bootstrap data");
 		Player[] players = getBootstrapValue(bootstrapData, "elements", Player[].class);
 		for (Player player : players) {
 			playerDAO.insert(player);
