@@ -10,6 +10,8 @@ Deployed via [AWS](https://aws.amazon.com/).
 ## Usage
 The API is running at http://kelanyll.com/fpl-wrapper and is documented at http://kelanyll.com/fpl-wrapper/swagger.
 
+See `/examples` for example usage of the API in Python.
+
 ### Development
 The project can be imported as a Maven project using IntelliJ IDEA. To run the server using IntelliJ IDEA, create a 
 Run configuration that runs the class `FPLWrapperApplication` with CLI argument `server server-config.yml`.
