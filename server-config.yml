@@ -15,10 +15,10 @@ database:
   user: postgres
 
   # the password
-  password: # insert password
+  password: ${FPL_DB_PASS}
 
   # the JDBC URL
-  url: #jdbc:postgresql://172.17.0.2/postgres
+  url: jdbc:postgresql://172.17.0.2/postgres
 
   # any properties specific to your JDBC driver:
   properties:

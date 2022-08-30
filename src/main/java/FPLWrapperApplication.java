@@ -5,6 +5,8 @@ import exceptions.DropwizardExceptionMapper;
 import health.FplHealthCheck;
 import client.HttpUtil;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -32,6 +34,11 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 				return configuration.swaggerBundleConfiguration;
 			}
 		});
+		bootstrap.setConfigurationSourceProvider(
+			new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+				new EnvironmentVariableSubstitutor(false)
+			)
+		);
 	}
 
 	@Override

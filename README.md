@@ -20,10 +20,11 @@ Run configuration that runs the class `FPLWrapperApplication` with CLI argument 
 The quickest way to get this running locally will be to install [Docker](https://www.docker.com/) on your machine 
 and run the server and database as containers. You will also need [Java 11](https://openjdk.java.net/projects/jdk/11/) and [Maven](https://maven.apache.org/) to build the server. 
 1. Navigate to `db/` and run `docker build -t fpl-wrapper-db .` to build the database image.
-2. Run `docker run --name fpl-wrapper-db -d -p 5432:5432 -e POSTGRES_PASSWORD=[INSERT_PASSWORD] fpl-wrapper-db` to run 
+2. Set a password for the database under an environment variable (such as `FPL_DB_PASS`).
+2. Run `docker run --name fpl-wrapper-db -d -p 5432:5432 -e POSTGRES_PASSWORD=$FPL_DB_PASS fpl-wrapper-db` to run 
    the 
    container.
-3. In `/server-config.yml`, insert the password used to run the database container and the JDBC url; the database 
+3. In `/server-config.yml`, insert the correct IP address in the JDBC url; the database 
    container should be running at `172.17.0.2` in the default bridge network but you can check this with `docker 
    network inspect bridge`. See here for more information about Docker networking: https://docs.docker.com/network/network-tutorial-standalone/.
 4. In the root of the project, run `mvn package` to build the server JAR.
