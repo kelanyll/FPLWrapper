@@ -58,7 +58,7 @@ public class FPLWrapperApplication extends Application<FPLWrapperConfiguration> 
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(new BootstrapWriter(httpUtil, environment.getObjectMapper(),
 			clubDao, playerDAO
-			), 0, 1, TimeUnit.HOURS);
+			), 0, 12, TimeUnit.HOURS);
 
 		final FplHealthCheck fplHealthCheck = new FplHealthCheck(httpUtil);
 		environment.healthChecks().register("FPL", fplHealthCheck);
