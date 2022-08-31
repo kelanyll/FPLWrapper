@@ -8,9 +8,10 @@ A user-friendly API for the Fantasy Premier League online game.
 
 Deployed via [AWS](https://aws.amazon.com/).
 ## Usage
-The API is running at http://kelanyll.com/fpl-wrapper and is documented at http://kelanyll.com/fpl-wrapper/swagger.
+The API is running at https://kelanyll.com/fpl-wrapper and is documented at https://kelanyll.com/fpl-wrapper/swagger.
 
-See http://www.kelanyll.com/posts/fpl-wrapper/ for an introduction into the API and `/examples` for example usage in Python.
+See https://kelanyll.com/posts/fpl-wrapper for an introduction into the API and `/examples` for example usage 
+in Python.
 
 ### Development
 The project can be imported as a Maven project using IntelliJ IDEA. To run the server using IntelliJ IDEA, create a 
@@ -29,5 +30,5 @@ and run the server and database as containers. You will also need [Java 11](http
    network inspect bridge`. See here for more information about Docker networking: https://docs.docker.com/network/network-tutorial-standalone/.
 4. In the root of the project, run `mvn package` to build the server JAR.
 5. Run `docker build -t fpl-wrapper-server .`.
-6. Run `docker run --name fpl-wrapper-server -d -p 8080:8080 -p 8081:8081 fpl-wrapper-server`.
+6. Run `docker run --name fpl-wrapper-server -d -p 8080:8080 -p 8081:8081 -e FPL_DB_PASS=$FPL_DB_PASS fpl-wrapper-server`.
 7. The server should be up and running now: http://localhost:8080/fpl-wrapper/swagger.
