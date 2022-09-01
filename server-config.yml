@@ -19,7 +19,7 @@ database:
   password: ${FPL_DB_PASS}
 
   # the JDBC URL
-  url: jdbc:postgresql://localhost/postgres
+  url: jdbc:postgresql://${FPL_DB_HOST}/postgres
 
   # any properties specific to your JDBC driver:
   properties:
