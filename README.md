@@ -7,9 +7,10 @@ A user-friendly API for the Fantasy Premier League online game.
 - [PostgreSQL](https://www.postgresql.org/)
 
 Deployed via [AWS](https://aws.amazon.com/).
-## Usage
-The API is running at https://kelanyll.com/fpl-wrapper and is documented at https://kelanyll.com/fpl-wrapper/swagger.
 
+*Note: I've disabled this API as I'm unable to maintain it.*
+
+## Usage
 See https://kelanyll.com/posts/fpl-wrapper for an introduction into the API and `/examples` for example usage 
 in Python.
 
